@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+trap 'rm -f ci.log' EXIT
+
+echo main | wasm32-wasi-cabal repl canary-test \
+  --enable-multi-repl \
+  --repl-options="-fno-break-points -fno-unoptimized-core-for-interpreter -fghci-browser -fghci-browser-playwright-browser-type=chromium -fghci-browser-playwright-launch-opts={\"channel\":\"chromium\"}" 2>&1 | tee ci.log
+
+grep -F ExitSuccess ci.log
+
+echo main | wasm32-wasi-cabal repl canary-test \
+  --enable-multi-repl \
+  --repl-options="-fno-break-points -fno-unoptimized-core-for-interpreter -fghci-browser -fghci-browser-playwright-browser-type=firefox" 2>&1 | tee ci.log
+
+grep -F ExitSuccess ci.log

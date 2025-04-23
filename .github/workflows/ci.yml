@@ -1,0 +1,61 @@
+name: ci
+
+on:
+  merge_group:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-24.04
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        flavour:
+          - "9.14"
+        experimental:
+          - false
+        include:
+          - flavour: "gmp"
+            experimental: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - name: setup-hscolour
+        run: |
+          cabal update --ignore-project
+          cabal install --ignore-project -O2 hscolour
+
+      - name: ghc-wasm-meta
+        run: |
+          pushd "$(mktemp -d)"
+          curl -L https://gitlab.haskell.org/haskell-wasm/ghc-wasm-meta/-/archive/master/ghc-wasm-meta-master.tar.gz | tar xz --strip-components=1
+          ./setup.sh
+          ~/.ghc-wasm/add_to_github_path.sh
+          cp cabal.project.local ${{ github.workspace }}
+          popd
+        env:
+          FLAVOUR: ${{ matrix.flavour }}
+          PLAYWRIGHT: 1
+
+      - name: gen-plan-json
+        run: |
+          wasm32-wasi-cabal build --dry-run
+
+      - name: cabal-cache
+        uses: actions/cache@v5
+        with:
+          key: ${{ matrix.flavour }}-${{ hashFiles('dist-newstyle/cache/plan.json') }}
+          restore-keys: ${{ matrix.flavour }}-
+          path: |
+            ~/.ghc-wasm/.cabal/store
+            dist-newstyle
+
+      - name: ci
+        run: |
+          ./util/ci
