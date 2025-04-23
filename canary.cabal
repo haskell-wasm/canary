@@ -1,0 +1,69 @@
+cabal-version: 3.14
+name: canary
+version: 0.1.0.0
+license: BSD-3-Clause
+license-file: LICENSE
+author: Cheng Shao
+maintainer: terrorjack@type.dance
+build-type: Simple
+extra-doc-files: CHANGELOG.md
+
+common deps
+  build-depends:
+    aeson >=2.2.3.0,
+    base,
+    bytestring,
+    ghc-experimental,
+    text,
+    vector >=0.13.2.0,
+    vector-stream >=0.1.0.1,
+
+  default-language: GHC2024
+  ghc-options:
+    -Weverything
+    -Wno-all-missed-specialisations
+    -Wno-implicit-prelude
+    -Wno-missing-export-lists
+    -Wno-missing-import-lists
+    -Wno-missing-kind-signatures
+    -Wno-missing-local-signatures
+    -Wno-missing-poly-kind-signatures
+    -Wno-missing-role-annotations
+    -Wno-missing-safe-haskell-mode
+    -Wno-prepositive-qualified-module
+    -Wno-unsafe
+
+library
+  import: deps
+  build-depends:
+    async >=2.2.6,
+    primitive >=0.9.1.0,
+    servant >=0.20.3.0,
+
+  exposed-modules:
+    Control.Concurrent.Async.Extra
+    Data.Stream.Monadic.Extra
+    Data.Stream.Monadic.Instances
+    GHC.Wasm.JS.Array
+    GHC.Wasm.JS.AsyncIterator
+    GHC.Wasm.JS.ESM
+    GHC.Wasm.JS.Free
+    GHC.Wasm.JS.JSON
+    GHC.Wasm.JS.ReadableStream
+    GHC.Wasm.JS.String
+    GHC.Wasm.JS.URL
+    GHC.Wasm.JS.Uint8Array
+
+  hs-source-dirs: src
+
+test-suite canary-test
+  import: deps
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: Main.hs
+  build-depends:
+    canary,
+    quickcheck-instances >=0.4,
+    tasty >=1.5.3,
+    tasty-hunit >=0.10.2,
+    tasty-quickcheck >=0.11.1,
