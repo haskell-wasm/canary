@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+FIREFOX_PATH=$(type -P firefox-esr || type -P firefox || type -P firefox-beta || type -P firefox-devedition || type -P firefox-nightly)
+
+exec wasm32-wasi-cabal repl ${1+"$@"} \
+  --repl-options="-fghci-browser -fghci-browser-puppeteer-launch-opts={\"browser\":\"firefox\",\"executablePath\":\"$FIREFOX_PATH\"}"
