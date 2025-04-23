@@ -1,0 +1,3 @@
+--command "exec wasm32-wasi-cabal repl --enable-multi-repl --repl-option=-fno-code"
+--restart cabal.project
+--restart canary.cabal
