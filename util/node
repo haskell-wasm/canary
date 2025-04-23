@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+exec wasm32-wasi-cabal repl ${1+"$@"}

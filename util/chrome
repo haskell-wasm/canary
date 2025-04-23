@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+CHROME_PATH=$(type -P google-chrome-stable || type -P google-chrome-beta || type -P google-chrome-unstable || type -P google-chrome-canary || type -P chromium || type -P chromium-browser)
+
+exec wasm32-wasi-cabal repl ${1+"$@"} \
+  --repl-options="-fghci-browser -fghci-browser-puppeteer-launch-opts={\"browser\":\"chrome\",\"protocol\":\"webDriverBiDi\",\"executablePath\":\"$CHROME_PATH\",\"args\":[\"--no-sandbox\"]}"
