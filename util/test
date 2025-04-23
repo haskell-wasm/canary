@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+wasm32-wasi-cabal build
+
+mkdir -p dist
+
+cp $(wasm32-wasi-cabal list-bin canary-test) dist
+
+"$(wasm32-wasi-ghc --print-libdir)"/post-link.mjs --input dist/canary-test.wasm --output dist/ghc_wasm_jsffi.js

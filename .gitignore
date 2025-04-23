@@ -1,0 +1,4 @@
+cabal.project.local
+ci.log
+dist
+dist-newstyle
